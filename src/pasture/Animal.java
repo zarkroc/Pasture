@@ -28,6 +28,8 @@ public abstract class Animal extends Entity implements Mover, Feeder, Breeder {
      * @param moveInterval
      * @param viewDistance
      * @param moveDelay
+     * @param reproductionDelay
+     * @param starvationCounter
      */
     public Animal(Pasture pasture, int moveInterval, int viewDistance, int moveDelay, int reproductionDelay, int starvationCounter) {
         super(pasture);
@@ -42,52 +44,52 @@ public abstract class Animal extends Entity implements Mover, Feeder, Breeder {
         this.hasFeed = false;
     }
 
-    /**
-     * A general method for grabbing a random element from a list. Does it
-     * belong in this class?
-     */
-    private static <X> X getRandomMember(java.util.List<X> c) {
-        if (c.isEmpty()) {
-            return null;
-        }
-        int n = (int) (Math.random() * c.size());
-        return c.get(n);
-    }
+//    /**
+//     * A general method for grabbing a random element from a list. Does it
+//     * belong in this class?
+//     */
+//    private static <X> X getRandomMember(java.util.List<X> c) {
+//        if (c.isEmpty()) {
+//            return null;
+//        }
+//        int n = (int) (Math.random() * c.size());
+//        return c.get(n);
+//    }
+////
+//    /**
+//     * Implementing the move method.
+//     */
+//    @Override
+//    public void move() {
+//    }
 
-    /**
-     * Implementing the move method.
-     */
-    @Override
-    public void move() {
-    }
-
-    /**
-     * Feed on sheep or Feed on grass
-     *
-     * @param cohabitant Entity
-     */
-    @Override
-    public void feed(Entity cohabitant) {
-        if (starvationCounter <= 0 && this.isAlive()) {
-            this.kill();
-        } else {
-            if (this instanceof Wolf) {
-                if (cohabitant instanceof Sheep && this.isAlive()) {
-                    cohabitant.kill();
-                    this.hasFeed = true;
-                    starvationCounter = starvationDelay;
-                } else {
-                    starvationCounter--;
-                }
-            } else if (this instanceof Sheep) {
-                if (cohabitant instanceof Grass && this.isAlive()) {
-                    cohabitant.kill();
-                    this.hasFeed = true;
-                    starvationCounter = starvationDelay;
-                } else {
-                    starvationCounter--;
-                }
-            }
-        }
-    }
+//    /**
+//     * Feed on sheep or Feed on grass
+//     *
+//     * @param cohabitant Entity
+//     */
+//    @Override
+//    public void feed(Entity cohabitant) {
+//        if (starvationCounter <= 0 && this.isAlive()) {
+//            this.kill();
+//        } else {
+//            if (this instanceof Wolf) {
+//                if (cohabitant instanceof Sheep && this.isAlive()) {
+//                    cohabitant.kill();
+//                    this.hasFeed = true;
+//                    starvationCounter = starvationDelay;
+//                } else {
+//                    starvationCounter--;
+//                }
+//            } else if (this instanceof Sheep) {
+//                if (cohabitant instanceof Grass && this.isAlive()) {
+//                    cohabitant.kill();
+//                    this.hasFeed = true;
+//                    starvationCounter = starvationDelay;
+//                } else {
+//                    starvationCounter--;
+//                }
+//            }
+//        }
+//    }
 }

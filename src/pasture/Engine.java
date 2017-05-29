@@ -32,7 +32,8 @@ public class Engine implements ActionListener {
         try {
             for (Entity entity : queue) {
                 if (!(entity instanceof Fence)) {
-                    if (entity.isAlive()) {
+                    //if (entity.isAlive()) {
+                    if (pasture.getEntityPosition(entity) != null) {
                         entity.tick();
                     }
                 }
@@ -42,19 +43,19 @@ public class Engine implements ActionListener {
             System.out.println("Exception: " + e);
             //System.exit(99);
         }
-
-        try {
-            // after all entities have acted, remove entities flagged as dead
-            for (Entity entity : queue) {
-                if (!entity.isAlive()) {
-                    pasture.removeEntity(entity);
-                }
-            }
-
-            // may occur if we remove entities within tick(), thus flag for later removal
-        } catch (NullPointerException e) {
-            System.out.println("Engine: " + e);
-        }
+//
+//        try {
+//            // after all entities have acted, remove entities flagged as dead
+//            for (Entity entity : queue) {
+//                //if (!entity.isAlive()) {
+//                    pasture.removeEntity(entity);
+//                //}
+//            }
+//
+//            // may occur if we remove entities within tick(), thus flag for later removal
+//        } catch (NullPointerException e) {
+//            System.out.println("Engine: " + e);
+//        }
 
         pasture.refresh();
         time++;

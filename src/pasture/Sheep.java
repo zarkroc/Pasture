@@ -46,7 +46,7 @@ public class Sheep extends Animal {
      */
     @Override
     public void breed() {
-        if (reproductionCounter-- <= 0 && this.isAlive()) {
+        if (reproductionCounter-- <= 0 && pasture.getEntityPosition(this) != null) {
             //Is there a near free space?
             if (pasture.getFreeNeighbours(this).size() > 0 && hasFeed == true) {
                 pasture.addEntity(new Sheep(pasture, moveInterval, viewDistance,
@@ -63,7 +63,7 @@ public class Sheep extends Animal {
      */
     @Override
     public void move() {
-        if (this.moveDelay-- <= 0 && this.isAlive()) {
+        if (this.moveDelay-- <= 0 && pasture.getEntityPosition(this) != null) {
             // get all entities within viewDistance of the animal
             List<Entity> seen = pasture.getEntitiesWithinDistance(pasture.getPosition(this), this.viewDistance);
 
@@ -122,10 +122,10 @@ public class Sheep extends Animal {
      */
     @Override
     public void feed(Entity cohabitant) {
-        if (starvationCounter <= 0 && this.isAlive()) {
+        if (starvationCounter <= 0 && pasture.getEntityPosition(this) != null) {
             this.kill();
         } else {
-            if (cohabitant instanceof Grass && this.isAlive()) {
+            if (cohabitant instanceof Grass && pasture.getEntityPosition(this) != null) {
                 cohabitant.kill();
                 this.hasFeed = true;
                 starvationCounter = starvationDelay;

@@ -69,7 +69,8 @@ public abstract class Entity {
      * Kills this entity
      */
     public void kill() {
-        this.alive = false;
+        pasture.removeEntity(this);
+        //this.alive = false;
     }
 
     /**
