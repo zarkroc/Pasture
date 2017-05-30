@@ -63,8 +63,16 @@ public class Sheep extends Animal {
      */
     @Override
     public void move() {
-        if (this.moveDelay-- <= 0 && pasture.getEntityPosition(this) != null) {
-            // get all entities within viewDistance of the animal
+        if (moveDelay <= 0 && pasture.getEntityPosition(this) != null) {
+            moveDelay--;
+            // perform move
+            pasture.moveEntity(this, EvaluateDirection());
+            moveDelay = moveInterval;
+        }
+    }
+    
+    private Point EvaluateDirection() {
+        // get all entities within viewDistance of the animal
             List<Entity> seen = pasture.getEntitiesWithinDistance(pasture.getPosition(this), this.viewDistance);
 
             // score all points surrounding our position, inclusive
@@ -109,10 +117,7 @@ public class Sheep extends Animal {
             // update direction
             lastX = (int) preferredNeighbour.getX() - (int) pasture.getPosition(this).getX();
             lastY = (int) preferredNeighbour.getY() - (int) pasture.getPosition(this).getY();
-            // perform move
-            pasture.moveEntity(this, preferredNeighbour);
-            this.moveDelay = this.moveInterval;
-        }
+            return preferredNeighbour;
     }
 
     /**

@@ -64,54 +64,60 @@ public class Wolf extends Animal {
      */
     @Override
     public void move() {
-        if (moveDelay-- <= 0 && pasture.getEntityPosition(this) != null) {
-            // get all entities within viewDistance of the animal
-            List<Entity> seen = pasture.getEntitiesWithinDistance(pasture.getPosition(this), this.viewDistance);
-
-            // score all points surrounding our position, inclusive
-            Map<Point, Double> scoredNeighbours = new HashMap<>();
-            Point here = pasture.getPosition(this);
-
-            pasture.getAllNeighbours(here).forEach((neighbour)
-                    -> {
-                Double score = 0.0;
-                for (Entity e : seen) {
-                    Double distance = neighbour.distance(pasture.getPosition(e));
-                    if (e instanceof Sheep) { // only eat sheep
-                        score += 100 / (1 + distance);
-                    }
-                }
-                scoredNeighbours.put(neighbour, score);
-            });
-
-            // get optimal direction
-            // from http://stackoverflow.com/questions/5911174/finding-key-associated-with-max-value-in-a-java-map
-            Map.Entry<Point, Double> maxEntry = null;
-            for (Map.Entry<Point, Double> entry : scoredNeighbours.entrySet()) {
-                if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0) {
-                    maxEntry = entry;
-                }
-            }
-            Point preferredNeighbour = maxEntry.getKey();
-
-            // if we can't go in the preferred direction, continue in direction from last turn.
-            if (pasture.getFreeNeighbours(this).contains(preferredNeighbour) == false) {
-                preferredNeighbour
-                        = new Point((int) pasture.getPosition(this).getX() + lastX,
-                                (int) pasture.getPosition(this).getY() + lastY);
-            }
-            // if we still can't go there, resort to random direction
-            if (pasture.getFreeNeighbours(this).contains(preferredNeighbour) == false) {
-                preferredNeighbour
-                        = getRandomMember(pasture.getFreeNeighbours(this));
-            }
-            // update direction
-            lastX = (int) preferredNeighbour.getX() - (int) pasture.getPosition(this).getX();
-            lastY = (int) preferredNeighbour.getY() - (int) pasture.getPosition(this).getY();
+        if (moveDelay <= 0 && pasture.getEntityPosition(this) != null) {
+            moveDelay--;
             // perform move
-            pasture.moveEntity(this, preferredNeighbour);
-            this.moveDelay = this.moveInterval;
+            pasture.moveEntity(this, evaluateDirection());
+            moveDelay = moveInterval;
         }
+    }
+
+    private Point evaluateDirection() {
+        // get all entities within viewDistance of the animal
+        List<Entity> seen = pasture.getEntitiesWithinDistance(pasture.getPosition(this), this.viewDistance);
+
+        // score all points surrounding our position, inclusive
+        Map<Point, Double> scoredNeighbours = new HashMap<>();
+        Point here = pasture.getPosition(this);
+
+        pasture.getAllNeighbours(here).forEach((neighbour)
+                -> {
+            Double score = 0.0;
+            for (Entity e : seen) {
+                Double distance = neighbour.distance(pasture.getPosition(e));
+                if (e instanceof Sheep) { // only eat sheep
+                    score += 100 / (1 + distance);
+                }
+            }
+            scoredNeighbours.put(neighbour, score);
+        });
+
+        // get optimal direction
+        // from http://stackoverflow.com/questions/5911174/finding-key-associated-with-max-value-in-a-java-map
+        Map.Entry<Point, Double> maxEntry = null;
+        for (Map.Entry<Point, Double> entry : scoredNeighbours.entrySet()) {
+            if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0) {
+                maxEntry = entry;
+            }
+        }
+        Point preferredNeighbour = maxEntry.getKey();
+
+        // if we can't go in the preferred direction, continue in direction from last turn.
+        if (pasture.getFreeNeighbours(this).contains(preferredNeighbour) == false) {
+            preferredNeighbour
+                    = new Point((int) pasture.getPosition(this).getX() + lastX,
+                            (int) pasture.getPosition(this).getY() + lastY);
+        }
+        // if we still can't go there, resort to random direction
+        if (pasture.getFreeNeighbours(this).contains(preferredNeighbour) == false) {
+            preferredNeighbour
+                    = getRandomMember(pasture.getFreeNeighbours(this));
+        }
+        // update direction
+        lastX = (int) preferredNeighbour.getX() - (int) pasture.getPosition(this).getX();
+        lastY = (int) preferredNeighbour.getY() - (int) pasture.getPosition(this).getY();
+        return preferredNeighbour;
+
     }
 
     /**
