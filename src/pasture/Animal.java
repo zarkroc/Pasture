@@ -1,15 +1,10 @@
 package pasture;
 
-import java.awt.Point;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  * A representation of an animal
  *
  * @author Tomas Perers
- * @version 2017-05-01
+ * @version 2017-06-05
  */
 public abstract class Animal extends Entity implements Mover, Feeder, Breeder {
 
@@ -43,53 +38,4 @@ public abstract class Animal extends Entity implements Mover, Feeder, Breeder {
         this.reproductionDelay = reproductionDelay;
         this.hasFeed = false;
     }
-
-//    /**
-//     * A general method for grabbing a random element from a list. Does it
-//     * belong in this class?
-//     */
-//    private static <X> X getRandomMember(java.util.List<X> c) {
-//        if (c.isEmpty()) {
-//            return null;
-//        }
-//        int n = (int) (Math.random() * c.size());
-//        return c.get(n);
-//    }
-////
-//    /**
-//     * Implementing the move method.
-//     */
-//    @Override
-//    public void move() {
-//    }
-
-//    /**
-//     * Feed on sheep or Feed on grass
-//     *
-//     * @param cohabitant Entity
-//     */
-//    @Override
-//    public void feed(Entity cohabitant) {
-//        if (starvationCounter <= 0 && this.isAlive()) {
-//            this.kill();
-//        } else {
-//            if (this instanceof Wolf) {
-//                if (cohabitant instanceof Sheep && this.isAlive()) {
-//                    cohabitant.kill();
-//                    this.hasFeed = true;
-//                    starvationCounter = starvationDelay;
-//                } else {
-//                    starvationCounter--;
-//                }
-//            } else if (this instanceof Sheep) {
-//                if (cohabitant instanceof Grass && this.isAlive()) {
-//                    cohabitant.kill();
-//                    this.hasFeed = true;
-//                    starvationCounter = starvationDelay;
-//                } else {
-//                    starvationCounter--;
-//                }
-//            }
-//        }
-//    }
 }

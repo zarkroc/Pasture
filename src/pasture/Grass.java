@@ -6,7 +6,7 @@ import javax.swing.*;
  * Representation of a plant
  *
  * @author Tomas Perers
- * @version 2017-05-01
+ * @version 2017-06-05
  */
 public class Grass extends Entity implements Breeder {
 
@@ -19,13 +19,18 @@ public class Grass extends Entity implements Breeder {
 
     }
 
+    @Override
+    public void tick() {
+        this.breed();
+    }
+
     /**
      * overrides the breed method. If there is an empty space and if the delay
      * is 0 or less. Create a new grass. Reset the delay.
      */
     @Override
     public void breed() {
-        if (multiplyDelay-- <= 0) {
+        if (multiplyDelay <= 0) {
             // free space adjacent?
             if (pasture.getFreeNeighbours(this).size() > 0) {
                 pasture.addEntity(new Grass(pasture),
@@ -36,6 +41,7 @@ public class Grass extends Entity implements Breeder {
                 this.multiplyDelay = MULTIPLY_INTERVAL;
             }
         }
+        multiplyDelay--;
     }
 
     /**

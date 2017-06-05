@@ -20,11 +20,6 @@ public abstract class Entity {
     protected final Pasture pasture;
 
     /**
-     * Is the Entity alive or not?
-     */
-    private boolean alive;
-
-    /**
      * Counter for reproduction ready
      */
     private int reproductionCounter;
@@ -37,49 +32,19 @@ public abstract class Entity {
     public Entity(Pasture pasture) {
         this.pasture = pasture;
         this.image = new ImageIcon("unkown.gif");
-        this.alive = true;
     }
 
     /**
      * tick() calls methods in entities that are implementing different
      * interfaces move() is executed to perform a move.
      */
-    public void tick() {
-        //Does the object implement a breeder
-        if (this instanceof Breeder) {
-            ((Breeder) this).breed();
-        }
-
-        //Does the object implements a mover?
-        if (this instanceof Mover) {
-            ((Mover) this).move();
-        }
-
-        //Does it implement a feeder?
-        if (this instanceof Feeder) {
-            pasture.getEntitiesAt(pasture.getPosition(this)).forEach((cohabitant)
-                    -> {
-                ((Feeder) this).feed(cohabitant);
-            });
-        }
-
-    }
+    abstract public void tick();
 
     /**
      * Kills this entity
      */
     public void kill() {
         pasture.removeEntity(this);
-        //this.alive = false;
-    }
-
-    /**
-     * Returns true or false depending on alive state
-     *
-     * @return boolean alive
-     */
-    public boolean isAlive() {
-        return this.alive;
     }
 
     /**

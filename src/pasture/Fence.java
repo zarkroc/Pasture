@@ -14,4 +14,7 @@ public class Fence extends Entity {
         super(pasture);
         this.image = new ImageIcon(getClass().getResource("fence.gif"));
     }
+    public void tick() {
+        // We are a fence we do nothing.
+    }
 }

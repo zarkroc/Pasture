@@ -27,16 +27,14 @@ public class Pasture {
     private final int wolves = 10;
     private final int plants = 40;
 
-    private final Set<Entity> world =
-       new HashSet<Entity>();
+    private final Set<Entity> world
+            = new HashSet<Entity>();
 
-    private final Map<Point, List<Entity>> grid =
-       new HashMap<Point, List<Entity>>();
+    private final Map<Point, List<Entity>> grid
+            = new HashMap<Point, List<Entity>>();
 
     private final Map<Entity, Point> point
-       = new HashMap<Entity, Point>();
-
-
+            = new HashMap<Entity, Point>();
 
     private final PastureGUI gui;
 
@@ -272,7 +270,7 @@ public class Pasture {
         if (l == null) {
             return true;
         }
-        return l.stream().noneMatch((old) -> (! old.isCompatible(e)));
+        return l.stream().noneMatch((old) -> (!old.isCompatible(e)));
     }
 
     public Point getEntityPosition(Entity entity) {
@@ -336,5 +334,4 @@ public class Pasture {
 
         new Pasture(sheepMove, sheepView, wolfMove, wolfView);
     }
-
 }

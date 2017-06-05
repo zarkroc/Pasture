@@ -18,7 +18,6 @@ public class Engine implements ActionListener {
     private final int speed = 10; //Number of times per second
     private final Timer timer = new Timer(SPEED_REFERENCE / speed, this);
     private int time = 0;
-
     private Pasture pasture;
 
     public Engine(Pasture pasture) {
@@ -28,35 +27,11 @@ public class Engine implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent event) {
         List<Entity> queue = pasture.getEntities();
-
-        try {
-            for (Entity entity : queue) {
-                if (!(entity instanceof Fence)) {
-                    //if (entity.isAlive()) {
-                    if (pasture.getEntityPosition(entity) != null) {
-                        entity.tick();
-                    }
-                }
-
+        for (Entity entity : queue) {
+            if (pasture.getEntityPosition(entity) != null) {
+                entity.tick();
             }
-        } catch (NullPointerException e) {
-            System.out.println("Exception: " + e);
-            //System.exit(99);
         }
-//
-//        try {
-//            // after all entities have acted, remove entities flagged as dead
-//            for (Entity entity : queue) {
-//                //if (!entity.isAlive()) {
-//                    pasture.removeEntity(entity);
-//                //}
-//            }
-//
-//            // may occur if we remove entities within tick(), thus flag for later removal
-//        } catch (NullPointerException e) {
-//            System.out.println("Engine: " + e);
-//        }
-
         pasture.refresh();
         time++;
 

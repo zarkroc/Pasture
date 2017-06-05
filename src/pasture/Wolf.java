@@ -10,7 +10,7 @@ import javax.swing.*;
  * Representation of a wolf
  *
  * @author Tomas Perers
- * @version 2017-05-01
+ * @version 2017-06-05
  */
 public class Wolf extends Animal {
 
@@ -41,13 +41,26 @@ public class Wolf extends Animal {
     }
 
     /**
+     * tick() calls methods to perform breeding, moving and feeding.
+     */
+    @Override
+    public void tick() {
+        this.move();
+        pasture.getEntitiesAt(pasture.getPosition(this)).forEach((cohabitant)
+                -> {
+            this.feed(cohabitant);
+        });
+        this.breed();
+    }
+
+    /**
      * Overrides the breed function. If there is a space next to a wolf it will
      * create a new instance if the counter is 0 or less. If not the counter
      * will be decreased.
      */
     @Override
     public void breed() {
-        if (reproductionCounter-- <= 0 && pasture.getEntityPosition(this) != null) {
+        if (reproductionCounter <= 0 && pasture.getEntityPosition(this) != null) {
             //Is there a near free space?
             if (pasture.getFreeNeighbours(this).size() > 0 && hasFeed == true) {
                 pasture.addEntity(new Wolf(pasture, moveInterval, viewDistance,
@@ -57,6 +70,7 @@ public class Wolf extends Animal {
                 this.reproductionCounter = reproductionDelay;
             }
         }
+        reproductionCounter--;
     }
 
     /**
@@ -65,11 +79,13 @@ public class Wolf extends Animal {
     @Override
     public void move() {
         if (moveDelay <= 0 && pasture.getEntityPosition(this) != null) {
-            moveDelay--;
             // perform move
-            pasture.moveEntity(this, evaluateDirection());
+            if (evaluateDirection() != null) {
+                pasture.moveEntity(this, evaluateDirection());
+            }
             moveDelay = moveInterval;
         }
+        moveDelay--;
     }
 
     private Point evaluateDirection() {
@@ -100,8 +116,8 @@ public class Wolf extends Animal {
                 maxEntry = entry;
             }
         }
-        Point preferredNeighbour = maxEntry.getKey();
 
+        Point preferredNeighbour = maxEntry.getKey();
         // if we can't go in the preferred direction, continue in direction from last turn.
         if (pasture.getFreeNeighbours(this).contains(preferredNeighbour) == false) {
             preferredNeighbour
@@ -114,10 +130,11 @@ public class Wolf extends Animal {
                     = getRandomMember(pasture.getFreeNeighbours(this));
         }
         // update direction
-        lastX = (int) preferredNeighbour.getX() - (int) pasture.getPosition(this).getX();
-        lastY = (int) preferredNeighbour.getY() - (int) pasture.getPosition(this).getY();
+        if (preferredNeighbour != null) {
+            lastX = (int) preferredNeighbour.getX() - (int) pasture.getPosition(this).getX();
+            lastY = (int) preferredNeighbour.getY() - (int) pasture.getPosition(this).getY();
+        }
         return preferredNeighbour;
-
     }
 
     /**
@@ -134,12 +151,9 @@ public class Wolf extends Animal {
                 cohabitant.kill();
                 this.hasFeed = true;
                 starvationCounter = starvationDelay;
-            } else {
-                starvationCounter--;
-
             }
         }
-
+        starvationCounter--;
     }
 
     /**

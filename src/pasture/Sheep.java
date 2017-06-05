@@ -10,7 +10,7 @@ import javax.swing.*;
  * A representation of a sheep
  *
  * @author Tomas Perers
- * @version 2017-05-01
+ * @version 2017-06-05
  */
 public class Sheep extends Animal {
 
@@ -22,6 +22,7 @@ public class Sheep extends Animal {
      * @param moveInterval int with move delay
      * @param viewDistance int with view distance
      * @param reproductionDelay int with reproduction delay.
+     * @param starvationDelay int days until starving.
      */
     public Sheep(Pasture pasture, int moveInterval, int viewDistance, int reproductionDelay, int starvationDelay) {
         super(pasture, moveInterval, viewDistance, moveInterval, reproductionDelay, starvationDelay);
@@ -40,13 +41,26 @@ public class Sheep extends Animal {
     }
 
     /**
+     * tick() calls methods to perform breeding, moving and feeding.
+     */
+    @Override
+    public void tick() {
+        move();
+        pasture.getEntitiesAt(pasture.getPosition(this)).forEach((cohabitant)
+                -> {
+            this.feed(cohabitant);
+        });
+        breed();
+    }
+
+    /**
      * Overrides the breed function. If there is a space next to a sheep it will
      * create a new instance if the counter is 0 or less. If not the counter
      * will be decreased.
      */
     @Override
     public void breed() {
-        if (reproductionCounter-- <= 0 && pasture.getEntityPosition(this) != null) {
+        if (reproductionCounter <= 0 && pasture.getEntityPosition(this) != null) {
             //Is there a near free space?
             if (pasture.getFreeNeighbours(this).size() > 0 && hasFeed == true) {
                 pasture.addEntity(new Sheep(pasture, moveInterval, viewDistance,
@@ -56,6 +70,7 @@ public class Sheep extends Animal {
                 this.reproductionCounter = reproductionDelay;
             }
         }
+        reproductionCounter--;
     }
 
     /**
@@ -64,60 +79,60 @@ public class Sheep extends Animal {
     @Override
     public void move() {
         if (moveDelay <= 0 && pasture.getEntityPosition(this) != null) {
-            moveDelay--;
             // perform move
-            pasture.moveEntity(this, EvaluateDirection());
+            if (evaluateDirection() != null) {
+                pasture.moveEntity(this, evaluateDirection());
+            }
             moveDelay = moveInterval;
         }
+        moveDelay--;
     }
-    
-    private Point EvaluateDirection() {
+
+    private Point evaluateDirection() {
         // get all entities within viewDistance of the animal
-            List<Entity> seen = pasture.getEntitiesWithinDistance(pasture.getPosition(this), this.viewDistance);
+        List<Entity> seen = pasture.getEntitiesWithinDistance(pasture.getPosition(this), this.viewDistance);
+        Map<Point, Double> scoredNeighbours = new HashMap<>();
+        Point here = pasture.getPosition(this);
 
-            // score all points surrounding our position, inclusive
-            Map<Point, Double> scoredNeighbours = new HashMap<>();
-            Point here = pasture.getPosition(this);
-
-            pasture.getAllNeighbours(here).forEach((neighbour)
-                    -> {
-                Double score = 0.0;
-                for (Entity e : seen) {
-                    Double distance = neighbour.distance(pasture.getPosition(e));
-                    if (e instanceof Wolf) { // Run away
-                        score -= 100 / (1 + distance);
-                    } else if (e instanceof Grass) {
-                        score += 90 / (1 + distance);
-                    }
-                }
-                scoredNeighbours.put(neighbour, score);
-            });
-
-            // get optimal direction
-            // from http://stackoverflow.com/questions/5911174/finding-key-associated-with-max-value-in-a-java-map
-            Map.Entry<Point, Double> maxEntry = null;
-            for (Map.Entry<Point, Double> entry : scoredNeighbours.entrySet()) {
-                if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0) {
-                    maxEntry = entry;
+        pasture.getAllNeighbours(here).forEach((neighbour)
+                -> {
+            Double score = 0.0;
+            for (Entity e : seen) {
+                Double distance = neighbour.distance(pasture.getPosition(e));
+                if (e instanceof Wolf) { // Run away
+                    score -= 100 / (1 + distance);
+                } else if (e instanceof Grass) {
+                    score += 90 / (1 + distance);
                 }
             }
-            Point preferredNeighbour = maxEntry.getKey();
+            scoredNeighbours.put(neighbour, score);
+        });
 
-            // if we can't go in the preferred direction, continue in direction from last turn.
-            if (pasture.getFreeNeighbours(this).contains(preferredNeighbour) == false) {
-                preferredNeighbour
-                        = new Point((int) pasture.getPosition(this).getX() + lastX,
-                                (int) pasture.getPosition(this).getY() + lastY);
+        Map.Entry<Point, Double> maxEntry = null;
+        for (Map.Entry<Point, Double> entry : scoredNeighbours.entrySet()) {
+            if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0) {
+                maxEntry = entry;
             }
-            // if we still can't go there, resort to random direction
-            if (pasture.getFreeNeighbours(this).contains(preferredNeighbour) == false) {
-                preferredNeighbour
-                        = getRandomMember(pasture.getFreeNeighbours(this));
-            }
-            // update direction
+        }
+        Point preferredNeighbour = maxEntry.getKey();
+
+        // if we can't go in the preferred direction, continue in direction from last turn.
+        if (pasture.getFreeNeighbours(this).contains(preferredNeighbour) == false) {
+            preferredNeighbour
+                    = new Point((int) pasture.getPosition(this).getX() + lastX,
+                            (int) pasture.getPosition(this).getY() + lastY);
+        }
+        // if we still can't go there, resort to random direction
+        if (pasture.getFreeNeighbours(this).contains(preferredNeighbour) == false) {
+            preferredNeighbour
+                    = getRandomMember(pasture.getFreeNeighbours(this));
+        }
+        // update direction
+        if (preferredNeighbour != null) {
             lastX = (int) preferredNeighbour.getX() - (int) pasture.getPosition(this).getX();
             lastY = (int) preferredNeighbour.getY() - (int) pasture.getPosition(this).getY();
-            return preferredNeighbour;
+        }
+        return preferredNeighbour;
     }
 
     /**
@@ -134,10 +149,9 @@ public class Sheep extends Animal {
                 cohabitant.kill();
                 this.hasFeed = true;
                 starvationCounter = starvationDelay;
-            } else {
-                starvationCounter--;
             }
         }
+        starvationCounter--;
     }
 
     /**
@@ -151,5 +165,4 @@ public class Sheep extends Animal {
         int n = (int) (Math.random() * c.size());
         return c.get(n);
     }
-
 }
