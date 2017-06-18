@@ -28,6 +28,8 @@ public class Sheep extends Animal {
         super(pasture, moveInterval, viewDistance, moveInterval, reproductionDelay, starvationDelay);
         this.image = new ImageIcon(getClass().getResource("sheep.gif"));
         this.reproductionCounter = reproductionDelay;
+        this.food = "Grass";
+        this.scared = true;
     }
 
     @Override
@@ -72,21 +74,7 @@ public class Sheep extends Animal {
         }
         reproductionCounter--;
     }
-
-    /**
-     * Implementing the move method.
-     */
-    @Override
-    public void move() {
-        if (moveDelay <= 0 && pasture.getEntityPosition(this) != null) {
-            // perform move
-            if (evaluateDirection() != null) {
-                pasture.moveEntity(this, evaluateDirection());
-            }
-            moveDelay = moveInterval;
-        }
-        moveDelay--;
-    }
+            
 
     private Point evaluateDirection() {
         // get all entities within viewDistance of the animal

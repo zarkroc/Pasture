@@ -28,6 +28,8 @@ public class Wolf extends Animal {
         super(pasture, moveInterval, viewDistance, moveInterval, reproductionDelay, starvationDelay);
         this.image = new ImageIcon(getClass().getResource("wolf.gif"));
         this.reproductionCounter = reproductionDelay;
+        this.food = "Sheep";
+        this.scared = false;
     }
 
     @Override
@@ -71,21 +73,6 @@ public class Wolf extends Animal {
             }
         }
         reproductionCounter--;
-    }
-
-    /**
-     * Implementing the move method.
-     */
-    @Override
-    public void move() {
-        if (moveDelay <= 0 && pasture.getEntityPosition(this) != null) {
-            // perform move
-            if (evaluateDirection() != null) {
-                pasture.moveEntity(this, evaluateDirection());
-            }
-            moveDelay = moveInterval;
-        }
-        moveDelay--;
     }
 
     private Point evaluateDirection() {
