@@ -40,9 +40,7 @@ public class Wolf extends Animal {
             return true;
         }
         return false;
-    }
-    
-    //public 
+    }  
 
     /**
      * tick() calls methods to perform breeding, moving and feeding.
@@ -76,56 +74,6 @@ public class Wolf extends Animal {
         }
         reproductionCounter--;
     }
-
-//    private Point evaluateDirection() {
-//        // get all entities within viewDistance of the animal
-//        List<Entity> seen = pasture.getEntitiesWithinDistance(pasture.getPosition(this), this.viewDistance);
-//
-//        // score all points surrounding our position, inclusive
-//        Map<Point, Double> scoredNeighbours = new HashMap<>();
-//        Point here = pasture.getPosition(this);
-//
-//        pasture.getAllNeighbours(here).forEach((neighbour)
-//                -> {
-//            Double score = 0.0;
-//            for (Entity e : seen) {
-//                Double distance = neighbour.distance(pasture.getPosition(e));
-//                if (e instanceof Sheep) { // only eat sheep
-//                    score += 100 / (1 + distance);
-//                }
-//            }
-//            scoredNeighbours.put(neighbour, score);
-//        });
-//
-//        // get optimal direction
-//        // from http://stackoverflow.com/questions/5911174/finding-key-associated-with-max-value-in-a-java-map
-//        Map.Entry<Point, Double> maxEntry = null;
-//        for (Map.Entry<Point, Double> entry : scoredNeighbours.entrySet()) {
-//            if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0) {
-//                maxEntry = entry;
-//            }
-//        }
-//
-//        Point preferredNeighbour = maxEntry.getKey();
-//        // if we can't go in the preferred direction, continue in direction from last turn.
-//        if (pasture.getFreeNeighbours(this).contains(preferredNeighbour) == false) {
-//            preferredNeighbour
-//                    = new Point((int) pasture.getPosition(this).getX() + lastX,
-//                            (int) pasture.getPosition(this).getY() + lastY);
-//        }
-//        // if we still can't go there, resort to random direction
-//        if (pasture.getFreeNeighbours(this).contains(preferredNeighbour) == false) {
-//            preferredNeighbour
-//                    = getRandomMember(pasture.getFreeNeighbours(this));
-//        }
-//        // update direction
-//        if (preferredNeighbour != null) {
-//            lastX = (int) preferredNeighbour.getX() - (int) pasture.getPosition(this).getX();
-//            lastY = (int) preferredNeighbour.getY() - (int) pasture.getPosition(this).getY();
-//        }
-//        return preferredNeighbour;
-//    }
-
     /**
      * Feed on sheep or Feed on grass
      *
@@ -144,16 +92,4 @@ public class Wolf extends Animal {
         }
         starvationCounter--;
     }
-
-//    /**
-//     * A general method for grabbing a random element from a list. Does it
-//     * belong in this class?
-//     */
-//    private static <X> X getRandomMember(java.util.List<X> c) {
-//        if (c.isEmpty()) {
-//            return null;
-//        }
-//        int n = (int) (Math.random() * c.size());
-//        return c.get(n);
-//    }
 }
