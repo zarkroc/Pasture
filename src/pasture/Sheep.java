@@ -29,7 +29,7 @@ public class Sheep extends Animal {
         this.image = new ImageIcon(getClass().getResource("sheep.gif"));
         this.reproductionCounter = reproductionDelay;
         this.food = "Grass";
-        this.scared = true;
+        this.scared = "Wolf";
     }
 
     @Override

@@ -21,7 +21,7 @@ public abstract class Animal extends Entity implements Mover, Feeder, Breeder {
     protected int lastX, lastY;
     protected boolean hasFeed;
     protected String food;
-    protected boolean scared;
+    protected String scared;
 
     /**
      * Creates a new animal in a pasture and sets moveInterval and viewDistance.
@@ -74,7 +74,11 @@ public abstract class Animal extends Entity implements Mover, Feeder, Breeder {
             Double score = 0.0;
             for (Entity e : seen) {
                 Double distance = neighbour.distance(pasture.getPosition(e));
-                if (e instanceof Sheep) { // only eat sheep
+                if (this.scared == e.getClass().toString()) {
+                    score -= 100 / (1 + distance);
+                }
+                else if (this.food == e.getClass().toString()) {
+                
                     score += 100 / (1 + distance);
                 }
             }
